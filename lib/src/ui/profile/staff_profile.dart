@@ -1,6 +1,7 @@
 import 'package:attendance_app/src/models/staff_profile_model.dart';
 import 'package:attendance_app/src/ui/widgets/app_button.dart';
 import 'package:attendance_app/src/ui/widgets/profile_pic.dart';
+import 'package:attendance_app/src/utils/utils.dart';
 import 'package:attendance_app/src/view_model/profile_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +26,10 @@ class StaffProfile extends StatelessWidget {
         Text(_profileViewModel.userId ?? ''),
         Text(staffProfileModel.type),
         QrImage(
-          data: _profileViewModel.userId ?? '',
+          data: Utils.setQrCode(
+            _profileViewModel.userId,
+            Utils.getLoginTypeFromEnum(_profileViewModel.userType),
+          ),
           version: QrVersions.auto,
           size: 130.0,
         ),

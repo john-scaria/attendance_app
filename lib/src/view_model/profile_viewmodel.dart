@@ -1,4 +1,5 @@
 import 'package:attendance_app/src/models/admin_profile_model.dart';
+import 'package:attendance_app/src/models/proceed_model.dart';
 import 'package:attendance_app/src/models/scan_model.dart';
 import 'package:attendance_app/src/models/screen_status.dart';
 import 'package:attendance_app/src/models/staff_profile_model.dart';
@@ -74,11 +75,37 @@ class ProfileViewModel extends ChangeNotifier {
     }
   }
 
-  ScanModel getScanData(String scanData) {
-    String s = scanData;
-    int idx = s.indexOf("#");
-    List parts = [s.substring(0, idx).trim(), s.substring(idx + 1).trim()];
-    return ScanModel(parts[0], parts[1]);
+  ScanModel? getScanData(String scanData) {
+    if (scanData.contains('<##>')) {
+      final _splits = scanData.split(RegExp(r'<##>'));
+      return ScanModel(_splits[0], _splits[1]);
+    }
+    return null;
+  }
+
+  Future<ProceedModel?> getVerificationDataFromDatabase({
+    required String uid,
+    required LoginUserType type,
+  }) async {
+    try {
+      final _collection = getDbCollection(userType: type);
+      final _data = (await _collection.doc(uid).get()).data();
+      if (type == LoginUserType.student) {
+        return ProceedModel(
+          'Name: ${_data!['full_name']}',
+          'Department: ${_data['department']} Semester: ${_data['semester']}',
+        );
+      } else if (type == LoginUserType.staff) {
+        return ProceedModel(
+          'Name: ${_data!['full_name']}',
+          'Type: ${_data['type']}',
+        );
+      }
+      return null;
+    } catch (e) {
+      print(e);
+      return null;
+    }
   }
 
   String _scanMessage = '';

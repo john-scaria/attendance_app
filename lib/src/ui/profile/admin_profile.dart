@@ -1,6 +1,5 @@
 import 'package:attendance_app/src/models/admin_profile_model.dart';
-import 'package:attendance_app/src/models/scan_model.dart';
-import 'package:attendance_app/src/models/user_type.dart';
+import 'package:attendance_app/src/models/proceed_model.dart';
 import 'package:attendance_app/src/ui/qr_scanner_screen.dart';
 import 'package:attendance_app/src/ui/widgets/app_button.dart';
 import 'package:attendance_app/src/ui/widgets/profile_pic.dart';
@@ -25,51 +24,65 @@ class AdminProfile extends StatelessWidget {
         Text(adminProfileModel.fullName),
         Text(_profileViewModel.userId ?? ''),
         AppButton(
-          onTap: () => _scanQr2(context),
+          onTap: () => _proceedToCollectData(context),
           buttonText: 'Scan Qr Code',
         ),
       ],
     );
   }
 
-  Future<void> _scanQr2(BuildContext context) async {
-    final _scanData =
-        context.read<ProfileViewModel>().getScanData('jane@abc.com#staff');
-    print(_scanData.userId);
-    print(_scanData.userType);
-    /*  await Utils.dialogLoaderForBoolFuture(
-      context,
-      context.read<ProfileViewModel>().adminUploadScanData(
-            dateTime: DateTime.now(),
-            id: 'jane@abc.com',
-            writeDataUserType: LoginUserType.staff,
-          ),
-    ).whenComplete(
-      () {
+  Future<void> _proceedToCollectData(BuildContext context) async {
+    final _qrCode = await _scanQr(context);
+    if (_qrCode != null) {
+      final _scanData = context.read<ProfileViewModel>().getScanData(_qrCode);
+      final ProceedModel? _proceedData =
+          await Utils.dialogLoaderForDynamicFuture(
+        context,
+        context.read<ProfileViewModel>().getVerificationDataFromDatabase(
+              uid: _scanData?.userId ?? '',
+              type: Utils.getLoginTypeFromString(_scanData?.userType),
+            ),
+      );
+      if (_proceedData != null) {
+        final bool _isProceed = await proceed_dialog.proceedDialog(
+              context,
+              name: _proceedData.name,
+              subText: _proceedData.subtitle,
+            ) ??
+            false;
+        if (_isProceed) {
+          await Utils.dialogLoaderForBoolFuture(
+            context,
+            context.read<ProfileViewModel>().adminUploadScanData(
+                  dateTime: DateTime.now(),
+                  id: _scanData?.userId ?? '',
+                  writeDataUserType:
+                      Utils.getLoginTypeFromString(_scanData?.userType),
+                ),
+          ).whenComplete(
+            () {
+              Utils.showSnackBar(
+                context: context,
+                message: context.read<ProfileViewModel>().scanMessage,
+              );
+            },
+          );
+        }
+      } else {
         Utils.showSnackBar(
           context: context,
-          message: context.read<ProfileViewModel>().scanMessage,
+          message: 'Invalid Data!!!',
         );
-      },
-    ); */
+      }
+    }
   }
 
-  Future<void> _scanQr(BuildContext context) async {
-    final String? _qrCode = await Navigator.push(
+  Future<String?> _scanQr(BuildContext context) async {
+    return await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => const QrScannerScreen(),
       ),
     );
-    if (_qrCode != null) {
-      print(
-          '**************************** QR $_qrCode *******************************');
-      final bool _isProceed =
-          await proceed_dialog.proceedDialog(context) ?? false;
-      if (_isProceed) {
-        print(
-            '**************************** Proceed $_isProceed *******************************');
-      }
-    }
   }
 }

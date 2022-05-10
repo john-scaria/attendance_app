@@ -51,6 +51,22 @@ class Utils {
     );
   }
 
+  static Future dialogLoaderForDynamicFuture(
+    BuildContext cx,
+    Future? future,
+  ) async {
+    return await showDialog(
+      context: cx,
+      barrierDismissible: false,
+      builder: (ctx) {
+        future?.then(
+          (value) => Navigator.pop(ctx, value),
+        );
+        return commonAlertDialog(loaderWidget());
+      },
+    );
+  }
+
   static Widget loaderWidget() => Row(
         children: [
           const CircularProgressIndicator(),
@@ -81,5 +97,12 @@ class Utils {
         ),
       ),
     );
+  }
+
+  static String setQrCode(String? uid, String? type) {
+    if (uid != null && type != null) {
+      return '$uid<##>$type';
+    }
+    return 'abc';
   }
 }

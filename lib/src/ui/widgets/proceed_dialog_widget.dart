@@ -1,12 +1,14 @@
-import 'package:attendance_app/src/models/leave_model.dart';
 import 'package:attendance_app/src/ui/widgets/app_button.dart';
-import 'package:attendance_app/src/ui/widgets/app_textfield.dart';
-import 'package:attendance_app/src/view_model/profile_viewmodel.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class ProceedDialogWidget extends StatelessWidget {
-  const ProceedDialogWidget({Key? key}) : super(key: key);
+  const ProceedDialogWidget({
+    Key? key,
+    required this.name,
+    required this.subtext,
+  }) : super(key: key);
+  final String name;
+  final String subtext;
 
   @override
   Widget build(BuildContext context) {
@@ -15,9 +17,8 @@ class ProceedDialogWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           const Text('Proceed?'),
-          Text('Name: John Doe'),
-          Text('Department: CSE'),
-          Text('Semester: S1'),
+          Text(name),
+          Text(subtext),
           Row(
             children: [
               Expanded(
