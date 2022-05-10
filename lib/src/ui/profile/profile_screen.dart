@@ -9,6 +9,7 @@ import 'package:attendance_app/src/ui/profile/staff_profile.dart';
 import 'package:attendance_app/src/ui/profile/student_profile.dart';
 import 'package:attendance_app/src/ui/widgets/app_button.dart';
 import 'package:attendance_app/src/ui/widgets/app_scaffold.dart';
+import 'package:attendance_app/src/utils/utils.dart';
 import 'package:attendance_app/src/view_model/login_viewmodel.dart';
 import 'package:attendance_app/src/view_model/profile_viewmodel.dart';
 import 'package:flutter/material.dart';
@@ -99,7 +100,10 @@ class ProfileBody extends StatelessWidget {
   }
 
   Future<void> _logout(BuildContext context) async {
-    context.read<LoginViewModel>().logout().whenComplete(
+    Utils.dialogLoaderForBoolFuture(
+      context,
+      context.read<LoginViewModel>().logout(),
+    ).whenComplete(
       () {
         Navigator.pushAndRemoveUntil(
           context,

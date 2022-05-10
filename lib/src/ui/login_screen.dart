@@ -5,6 +5,7 @@ import 'package:attendance_app/src/ui/widgets/app_scaffold.dart';
 import 'package:attendance_app/src/ui/widgets/app_tabs.dart';
 import 'package:attendance_app/src/ui/widgets/app_textfield.dart';
 import 'package:attendance_app/src/ui/widgets/tab_widget.dart';
+import 'package:attendance_app/src/utils/utils.dart';
 import 'package:attendance_app/src/view_model/login_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
@@ -71,13 +72,20 @@ class LoginScreen extends StatelessWidget {
     String emailAddress,
     String password,
   ) async {
-    bool _isLoginSuccess = await context.read<LoginViewModel>().login(
-          email: emailAddress,
-          password: password,
-          userType: context.read<LoginViewModel>().currentLoginUserType,
-        );
+    bool _isLoginSuccess = await Utils.dialogLoaderForBoolFuture(
+      context,
+      context.read<LoginViewModel>().login(
+            email: emailAddress,
+            password: password,
+            userType: context.read<LoginViewModel>().currentLoginUserType,
+          ),
+    );
     if (_isLoginSuccess) {
       Phoenix.rebirth(context);
+    } else {
+      Utils.showSnackBar(
+          context: context,
+          message: context.read<LoginViewModel>().loginMessage);
     }
   }
 }

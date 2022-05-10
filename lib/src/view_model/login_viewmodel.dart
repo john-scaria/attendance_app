@@ -46,8 +46,8 @@ class LoginViewModel extends ChangeNotifier {
   Future<String?> get userType async =>
       await UserSession.getData(key: UserSession.userTypeKey);
 
-  String _errorMessage = '';
-  String get errorMessage => _errorMessage;
+  String _loginMessage = '';
+  String get loginMessage => _loginMessage;
 
   Future<bool> login({
     required String email,
@@ -63,11 +63,9 @@ class LoginViewModel extends ChangeNotifier {
         },
       );
       if (_hasEmail) {
-        print('has email');
         final _document = _collection.doc(email);
         final _data = (await _document.get()).data();
         if (_data!['password'] == password) {
-          print('has password');
           await UserSession.saveData(
             key: UserSession.userIdKey,
             data: email,
@@ -78,20 +76,22 @@ class LoginViewModel extends ChangeNotifier {
           );
           return true;
         } else {
-          print('has no password');
+          _loginMessage = 'Incorrect Password!!';
         }
       } else {
-        print('has no email');
+        _loginMessage = 'Incorrect Email!!';
       }
       return false;
     } catch (e) {
       print(e);
+      _loginMessage = 'Login Error!!';
       return false;
     }
   }
 
-  Future<void> logout() async {
+  Future<bool> logout() async {
     await UserSession.removeData(key: UserSession.userIdKey);
     await UserSession.removeData(key: UserSession.userTypeKey);
+    return true;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:attendance_app/src/models/admin_profile_model.dart';
+import 'package:attendance_app/src/models/scan_model.dart';
 import 'package:attendance_app/src/models/screen_status.dart';
 import 'package:attendance_app/src/models/staff_profile_model.dart';
 import 'package:attendance_app/src/models/student_profile_model.dart';
@@ -70,6 +71,53 @@ class ProfileViewModel extends ChangeNotifier {
     } catch (e) {
       print(e);
       setProfileScreenStatus(ScreenStatus.error);
+    }
+  }
+
+  ScanModel getScanData(String scanData) {
+    String s = scanData;
+    int idx = s.indexOf("#");
+    List parts = [s.substring(0, idx).trim(), s.substring(idx + 1).trim()];
+    return ScanModel(parts[0], parts[1]);
+  }
+
+  String _scanMessage = '';
+  String get scanMessage => _scanMessage;
+
+  Future<bool> adminUploadScanData({
+    required DateTime dateTime,
+    required LoginUserType writeDataUserType,
+    required String id,
+  }) async {
+    try {
+      final _collection = getDbCollection(userType: writeDataUserType)
+          .doc(id)
+          .collection('attendance');
+      final _documents = (await _collection.get()).docs;
+      bool _hasDate = _documents.any(
+        (element) {
+          return element.id == Utils.timeToddMMyyyyString(dateTime);
+        },
+      );
+      if (!_hasDate) {
+        await _collection.doc(Utils.timeToddMMyyyyString(dateTime)).set(
+          {
+            "time": dateTime.toString(),
+            "status": true,
+          },
+        );
+        _scanMessage = 'Attendance Updated!!';
+        notifyListeners();
+        return true;
+      }
+      _scanMessage = 'Attendance Already Marked!!';
+      notifyListeners();
+      return false;
+    } catch (e) {
+      print(e);
+      _scanMessage = 'Unable to Update Attendance!!';
+      notifyListeners();
+      return false;
     }
   }
 }
