@@ -4,6 +4,7 @@ import 'package:attendance_app/src/ui/login_screen.dart';
 import 'package:attendance_app/src/ui/profile/profile_screen.dart';
 import 'package:attendance_app/src/ui/widgets/app_scaffold.dart';
 import 'package:attendance_app/src/ui/profile/profile_screen.dart';
+import 'package:attendance_app/src/ui/widgets/logo_widget.dart';
 import 'package:attendance_app/src/utils/utils.dart';
 import 'package:attendance_app/src/view_model/login_viewmodel.dart';
 import 'package:attendance_app/src/view_model/profile_viewmodel.dart';
@@ -56,8 +57,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(
-      child: Container(),
+    return const AppScaffold(
+      child: Center(child: LogoWidget()),
     );
   }
 }
