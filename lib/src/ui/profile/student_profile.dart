@@ -1,11 +1,12 @@
 import 'package:attendance_app/src/models/student_profile_model.dart';
 import 'package:attendance_app/src/ui/widgets/app_button.dart';
+import 'package:attendance_app/src/ui/widgets/app_qr_view.dart';
 import 'package:attendance_app/src/ui/widgets/profile_pic.dart';
+import 'package:attendance_app/src/utils/constants.dart';
 import 'package:attendance_app/src/utils/utils.dart';
 import 'package:attendance_app/src/view_model/profile_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:attendance_app/src/ui/dialogs/leave_dialog.dart'
     as leave_dialog;
 
@@ -19,27 +20,40 @@ class StudentProfile extends StatelessWidget {
     return Column(
       children: [
         const ProfilePic(),
-        Text(studentData.fullName),
-        Text(_profileViewModel.userId ?? ''),
+        Constants.verticalSpacer5,
         Text(
-            'Department: ${studentData.department} Semester: ${studentData.semester}'),
-        Text('Roll No.: ${studentData.rollNo}'),
-        const Text('Student'),
-        QrImage(
+          studentData.fullName,
+          style: const TextStyle(
+            fontSize: 15.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Constants.verticalSpacer5,
+        Text(
+          _profileViewModel.userId ?? '',
+          style: const TextStyle(
+            fontSize: 12.0,
+            fontWeight: FontWeight.w200,
+          ),
+        ),
+        Constants.verticalSpacer5,
+        Text(
+          'Dept: ${studentData.department}, Sem: ${studentData.semester}',
+          style: const TextStyle(
+            fontSize: 12.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Constants.verticalSpacer15,
+        AppQrView(
           data: Utils.setQrCode(
             _profileViewModel.userId,
             Utils.getLoginTypeFromEnum(_profileViewModel.userType),
           ),
-          version: QrVersions.auto,
-          size: 130.0,
         ),
-        AppButton(
-          onTap: () async {
-            final _leaveData = await leave_dialog.leaveDialog(context);
-            if (_leaveData != null) {}
-          },
-          buttonText: 'Apply Leave',
-        ),
+        /* Text('Roll No.: ${studentData.rollNo}'),
+        Constants.verticalSpacer10,
+        const Text('Student'), */
       ],
     );
   }

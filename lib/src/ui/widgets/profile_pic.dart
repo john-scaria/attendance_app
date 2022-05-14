@@ -5,14 +5,10 @@ class ProfilePic extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CircleAvatar(
-      backgroundColor: Colors.white,
-      child: Icon(
-        Icons.person_rounded,
-        size: 50.0,
-        color: Colors.blue,
-      ),
-      radius: 50.0,
+    return Image.asset(
+      'assets/images/profile_photo.png',
+      height: 150.0,
+      width: 150.0,
     );
   }
 }

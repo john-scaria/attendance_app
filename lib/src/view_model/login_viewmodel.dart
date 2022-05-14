@@ -13,11 +13,23 @@ class LoginViewModel extends ChangeNotifier {
   //Register
   final emailRegisterTextFieldController = TextEditingController();
   final fullNameRegisterTextFieldController = TextEditingController();
-  final departmentRegisterTextFieldController = TextEditingController();
-  final semesterRegisterTextFieldController = TextEditingController();
   final rollNoTextFieldController = TextEditingController();
   final passwordRegisterTextFieldController = TextEditingController();
   final confirmPasswordRegisterTextFieldController = TextEditingController();
+
+  void clearRegistrationText() {
+    emailRegisterTextFieldController.clear();
+    fullNameRegisterTextFieldController.clear();
+    rollNoTextFieldController.clear();
+    passwordRegisterTextFieldController.clear();
+    confirmPasswordRegisterTextFieldController.clear();
+    _clearDropDowns();
+  }
+
+  void clearLoginText() {
+    emailLoginTextFieldController.clear();
+    passwordLogindTextFieldController.clear();
+  }
 
   LoginUserType _currentLoginUserType = LoginUserType.student;
   LoginUserType get currentLoginUserType => _currentLoginUserType;
@@ -74,6 +86,7 @@ class LoginViewModel extends ChangeNotifier {
             key: UserSession.userTypeKey,
             data: Utils.getLoginTypeFromEnum(userType),
           );
+          clearLoginText();
           return true;
         } else {
           _loginMessage = 'Incorrect Password!!';
@@ -93,5 +106,105 @@ class LoginViewModel extends ChangeNotifier {
     await UserSession.removeData(key: UserSession.userIdKey);
     await UserSession.removeData(key: UserSession.userTypeKey);
     return true;
+  }
+
+  CollectionReference<Map<String, dynamic>> getRegisterDbCollection({
+    required RegisterUserType userType,
+  }) {
+    String _user = Utils.getRegisterTypeFromEnum(userType);
+    return _db.collection(_user);
+  }
+
+  String _registerMessage = '';
+  String get registerMessage => _registerMessage;
+
+  Future<bool> register() async {
+    try {
+      final _collection =
+          getRegisterDbCollection(userType: _currentRegisterUserType);
+      final _documents = (await _collection.get()).docs;
+      bool _hasEmail = _documents.any(
+        (element) {
+          return element.id == emailRegisterTextFieldController.text;
+        },
+      );
+      if (_hasEmail) {
+        _registerMessage = 'Email Already Exists. Try Another...';
+        return false;
+      }
+      if (_currentRegisterUserType == RegisterUserType.student) {
+        await _collection.doc(emailRegisterTextFieldController.text).set({
+          'department': _selectedDepartment,
+          'full_name': fullNameRegisterTextFieldController.text,
+          'password': passwordRegisterTextFieldController.text,
+          'roll_no': int.parse(rollNoTextFieldController.text),
+          'semester': _selectedSemester,
+        });
+        _registerMessage = 'Registration Successful';
+        clearRegistrationText();
+        return true;
+      }
+      if (_currentRegisterUserType == RegisterUserType.staff) {
+        await _collection.doc(emailRegisterTextFieldController.text).set({
+          'full_name': fullNameRegisterTextFieldController.text,
+          'password': passwordRegisterTextFieldController.text,
+          'type': _selectedProfession,
+        });
+        _registerMessage = 'Registration Successful';
+        clearRegistrationText();
+        return true;
+      }
+      _registerMessage = 'Registration Failed';
+      return false;
+    } catch (e) {
+      print(e);
+      _registerMessage = 'Registration Failed';
+      return false;
+    }
+  }
+
+  final List<String> semesterList = [
+    'S1',
+    'S2',
+    'S3',
+  ];
+  String _selectedSemester = 'S1';
+  String get selectedSemester => _selectedSemester;
+  void setSelectedSemester(String sem) {
+    _selectedSemester = sem;
+    notifyListeners();
+  }
+
+  final List<String> departmentList = [
+    'CSE',
+    'ME',
+    'ECE',
+    'EEE',
+    'CE',
+    'IT',
+  ];
+  String _selectedDepartment = 'CSE';
+  String get selectedDepartment => _selectedDepartment;
+  void setSelectedDepartment(String dept) {
+    _selectedDepartment = dept;
+    notifyListeners();
+  }
+
+  final List<String> professionList = [
+    'Assistant Professor',
+    'Professor',
+    'Principal',
+  ];
+  String _selectedProfession = 'Assistant Professor';
+  String get selectedProfession => _selectedProfession;
+  void setSelectedProfession(String prof) {
+    _selectedProfession = prof;
+    notifyListeners();
+  }
+
+  void _clearDropDowns() {
+    _selectedSemester = 'S1';
+    _selectedDepartment = 'CSE';
+    _selectedProfession = 'Assistant Professor';
   }
 }

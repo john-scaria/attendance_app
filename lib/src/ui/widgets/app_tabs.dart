@@ -7,8 +7,21 @@ class AppTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: tabWidget,
+    return Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(
+            20.0,
+          ),
+          border: Border.all(color: Colors.black)),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(
+          20.0,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: tabWidget,
+        ),
+      ),
     );
   }
 }

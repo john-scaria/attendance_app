@@ -29,6 +29,28 @@ class Utils {
     }
   }
 
+  static String getRegisterTypeFromEnum(RegisterUserType? userType) {
+    switch (userType) {
+      case RegisterUserType.student:
+        return 'students';
+      case RegisterUserType.staff:
+        return 'staff';
+      default:
+        return 'students';
+    }
+  }
+
+  static RegisterUserType? getRegisterTypeFromString(String? userType) {
+    switch (userType) {
+      case 'students':
+        return RegisterUserType.student;
+      case 'staff':
+        return RegisterUserType.staff;
+      default:
+        return null;
+    }
+  }
+
   static String timeToddMMyyyyString(DateTime? time) {
     return time != null
         ? DateFormat('dd-MM-yyyy').format(time)

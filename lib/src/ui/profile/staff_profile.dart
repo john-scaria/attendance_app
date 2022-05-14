@@ -1,6 +1,8 @@
 import 'package:attendance_app/src/models/staff_profile_model.dart';
 import 'package:attendance_app/src/ui/widgets/app_button.dart';
+import 'package:attendance_app/src/ui/widgets/app_qr_view.dart';
 import 'package:attendance_app/src/ui/widgets/profile_pic.dart';
+import 'package:attendance_app/src/utils/constants.dart';
 import 'package:attendance_app/src/utils/utils.dart';
 import 'package:attendance_app/src/view_model/profile_viewmodel.dart';
 import 'package:flutter/material.dart';
@@ -22,23 +24,36 @@ class StaffProfile extends StatelessWidget {
     return Column(
       children: [
         const ProfilePic(),
-        Text(staffProfileModel.fullName),
-        Text(_profileViewModel.userId ?? ''),
-        Text(staffProfileModel.type),
-        QrImage(
+        Constants.verticalSpacer5,
+        Text(
+          staffProfileModel.fullName,
+          style: const TextStyle(
+            fontSize: 15.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Constants.verticalSpacer5,
+        Text(
+          _profileViewModel.userId ?? '',
+          style: const TextStyle(
+            fontSize: 12.0,
+            fontWeight: FontWeight.w200,
+          ),
+        ),
+        Constants.verticalSpacer5,
+        Text(
+          staffProfileModel.type,
+          style: const TextStyle(
+            fontSize: 12.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Constants.verticalSpacer15,
+        AppQrView(
           data: Utils.setQrCode(
             _profileViewModel.userId,
             Utils.getLoginTypeFromEnum(_profileViewModel.userType),
           ),
-          version: QrVersions.auto,
-          size: 130.0,
-        ),
-        AppButton(
-          onTap: () async {
-            final _leaveData = await leave_dialog.leaveDialog(context);
-            if (_leaveData != null) {}
-          },
-          buttonText: 'Apply Leave',
         ),
       ],
     );

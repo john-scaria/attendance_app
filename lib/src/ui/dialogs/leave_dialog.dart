@@ -5,6 +5,6 @@ import 'package:flutter/material.dart';
 Future<LeaveModel?> leaveDialog(BuildContext context) async {
   return await showDialog<LeaveModel?>(
     context: context,
-    builder: (_) => const LeaveDialogWidget(),
+    builder: (_) => LeaveDialogWidget(),
   );
 }

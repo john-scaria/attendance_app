@@ -3,6 +3,7 @@ import 'package:attendance_app/src/models/proceed_model.dart';
 import 'package:attendance_app/src/ui/qr_scanner_screen.dart';
 import 'package:attendance_app/src/ui/widgets/app_button.dart';
 import 'package:attendance_app/src/ui/widgets/profile_pic.dart';
+import 'package:attendance_app/src/utils/constants.dart';
 import 'package:attendance_app/src/utils/utils.dart';
 import 'package:attendance_app/src/view_model/profile_viewmodel.dart';
 import 'package:flutter/material.dart';
@@ -21,8 +22,23 @@ class AdminProfile extends StatelessWidget {
     return Column(
       children: [
         const ProfilePic(),
-        Text(adminProfileModel.fullName),
-        Text(_profileViewModel.userId ?? ''),
+        Constants.verticalSpacer5,
+        Text(
+          adminProfileModel.fullName,
+          style: const TextStyle(
+            fontSize: 15.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Constants.verticalSpacer5,
+        Text(
+          _profileViewModel.userId ?? '',
+          style: const TextStyle(
+            fontSize: 12.0,
+            fontWeight: FontWeight.w200,
+          ),
+        ),
+        Constants.verticalSpacer15,
         AppButton(
           onTap: () => _proceedToCollectData(context),
           buttonText: 'Scan Qr Code',

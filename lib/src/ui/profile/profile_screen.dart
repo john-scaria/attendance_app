@@ -9,11 +9,14 @@ import 'package:attendance_app/src/ui/profile/staff_profile.dart';
 import 'package:attendance_app/src/ui/profile/student_profile.dart';
 import 'package:attendance_app/src/ui/widgets/app_button.dart';
 import 'package:attendance_app/src/ui/widgets/app_scaffold.dart';
+import 'package:attendance_app/src/utils/constants.dart';
 import 'package:attendance_app/src/utils/utils.dart';
 import 'package:attendance_app/src/view_model/login_viewmodel.dart';
 import 'package:attendance_app/src/view_model/profile_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:attendance_app/src/ui/dialogs/leave_dialog.dart'
+    as leave_dialog;
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -63,17 +66,33 @@ class ProfileBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final _profileViewModel = context.read<ProfileViewModel>();
     final _userData = _profileViewModel.userData;
-    return Column(
-      children: [
-        setType(
-          userType: _profileViewModel.userType,
-          userData: _userData,
-        ),
-        AppButton(
-          onTap: () => _logout(context),
-          buttonText: 'Logout',
-        ),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          setType(
+            userType: _profileViewModel.userType,
+            userData: _userData,
+          ),
+          if (_profileViewModel.userType != LoginUserType.admin)
+            Column(
+              children: [
+                Constants.verticalSpacer10,
+                AppButton(
+                  onTap: () => _applyLeave(context),
+                  buttonText: 'Apply Leave',
+                ),
+              ],
+            ),
+          Constants.verticalSpacer15,
+          AppButton(
+            buttonColor: Colors.white,
+            borderSideColor: Colors.black,
+            textColor: Colors.black,
+            onTap: () => _logout(context),
+            buttonText: 'Logout',
+          ),
+        ],
+      ),
     );
   }
 
@@ -108,11 +127,36 @@ class ProfileBody extends StatelessWidget {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-            builder: (_) => const LoginScreen(),
+            builder: (_) => LoginScreen(),
           ),
           (route) => false,
         );
       },
     );
+  }
+
+  Future<void> _applyLeave(BuildContext context) async {
+    final _leaveData = await leave_dialog.leaveDialog(context);
+    if (_leaveData != null) {
+      final _isLeaveApplied = await Utils.dialogLoaderForBoolFuture(
+        context,
+        context.read<ProfileViewModel>().applyLeave(
+              date: _leaveData.date,
+              reason: _leaveData.reason,
+            ),
+      );
+      if (_isLeaveApplied) {
+        context.read<ProfileViewModel>().clearLeaveRecords();
+        Utils.showSnackBar(
+          context: context,
+          message: 'Leave Applied',
+        );
+      } else {
+        Utils.showSnackBar(
+          context: context,
+          message: 'Unable to apply Leave!!',
+        );
+      }
+    }
   }
 }

@@ -2,6 +2,7 @@ import 'package:attendance_app/src/ui/splash_screen.dart';
 import 'package:attendance_app/src/view_model/login_viewmodel.dart';
 import 'package:attendance_app/src/view_model/profile_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class MyApp extends StatelessWidget {
@@ -32,6 +33,9 @@ class MyMaterial extends StatelessWidget {
       title: 'Attendance App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        textTheme: GoogleFonts.interTextTheme(
+          Theme.of(context).textTheme,
+        ),
       ),
       home: const SplashScreen(),
     );

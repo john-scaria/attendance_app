@@ -8,6 +8,7 @@ import 'package:attendance_app/src/models/user_type.dart';
 import 'package:attendance_app/src/utils/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ProfileViewModel extends ChangeNotifier {
   final _db = FirebaseFirestore.instance;
@@ -93,7 +94,7 @@ class ProfileViewModel extends ChangeNotifier {
       if (type == LoginUserType.student) {
         return ProceedModel(
           'Name: ${_data!['full_name']}',
-          'Department: ${_data['department']} Semester: ${_data['semester']}',
+          'Dept: ${_data['department']}, Sem: ${_data['semester']}',
         );
       } else if (type == LoginUserType.staff) {
         return ProceedModel(
@@ -119,7 +120,7 @@ class ProfileViewModel extends ChangeNotifier {
     try {
       final _collection = getDbCollection(userType: writeDataUserType)
           .doc(id)
-          .collection('attendance');
+          .collection('present');
       final _documents = (await _collection.get()).docs;
       bool _hasDate = _documents.any(
         (element) {
@@ -129,8 +130,7 @@ class ProfileViewModel extends ChangeNotifier {
       if (!_hasDate) {
         await _collection.doc(Utils.timeToddMMyyyyString(dateTime)).set(
           {
-            "time": dateTime.toString(),
-            "status": true,
+            "time_recorded": dateTime.toString(),
           },
         );
         _scanMessage = 'Attendance Updated!!';
@@ -146,5 +146,55 @@ class ProfileViewModel extends ChangeNotifier {
       notifyListeners();
       return false;
     }
+  }
+
+  String _currentDate = Utils.timeToddMMyyyyString(DateTime.now());
+  String get currentDate => _currentDate;
+
+  void setCurrentDate(String date) {
+    _currentDate = date;
+    notifyListeners();
+  }
+
+  Future<DateTime?> getDate({
+    String? initialDate,
+    required BuildContext context,
+  }) async {
+    final DateTime? _picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate == null
+          ? DateTime.now().add(const Duration(days: 0))
+          : DateFormat('dd-MM-yyyy').parse(initialDate),
+      firstDate: DateTime.now().add(const Duration(days: 0)),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+    return _picked;
+  }
+
+  Future<bool> applyLeave({
+    required String reason,
+    required String date,
+  }) async {
+    try {
+      final _collection =
+          getDbCollection(userType: _userType ?? LoginUserType.student)
+              .doc(_userId)
+              .collection('leave');
+      await _collection.doc(date).set(
+        {
+          "time_recorded": DateTime.now().toString(),
+          "reason": reason,
+        },
+      );
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  void clearLeaveRecords() {
+    _currentDate = Utils.timeToddMMyyyyString(DateTime.now());
+    leaveReasonTextFieldController.clear();
   }
 }
