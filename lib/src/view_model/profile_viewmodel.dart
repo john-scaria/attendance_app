@@ -1,3 +1,4 @@
+import 'package:attendance_app/src/fcm/fcm_send_notification.dart';
 import 'package:attendance_app/src/models/admin_profile_model.dart';
 import 'package:attendance_app/src/models/proceed_model.dart';
 import 'package:attendance_app/src/models/scan_model.dart';
@@ -186,10 +187,63 @@ class ProfileViewModel extends ChangeNotifier {
           "reason": reason,
         },
       );
+      final _userData =
+          (await getDbCollection(userType: _userType ?? LoginUserType.student)
+                      .doc(_userId)
+                      .get())
+                  .data() ??
+              {};
+      String _mssgTitle = '';
+      String _mssgBody = '';
+      if (_userType == LoginUserType.student) {
+        _mssgTitle = 'Leave Requested by Student: ${_userData['full_name']}';
+        _mssgBody =
+            'Reason: $reason, Leave Date: $date, Dept: ${_userData['department']},Sem: ${_userData['semester']}';
+      }
+      if (_userType == LoginUserType.staff) {
+        _mssgTitle =
+            'Leave Requested by ${_userData['type']}: ${_userData['full_name']}';
+        _mssgBody = 'Reason: $reason, Leave Date: $date';
+      }
+      final _fcmIdList = await getAllFcmIds();
+      await FcmSendNotification.sendNotification(
+          fcmIdList: _fcmIdList,
+          messageTitle: _mssgTitle,
+          messageBody: _mssgBody);
       return true;
     } catch (e) {
       print(e);
       return false;
+    }
+  }
+
+  Future<List<String>> getAllFcmIds() async {
+    final _studentFcmList = await getUserTypeFcmIds(LoginUserType.student);
+    final _staffFcmList = await getUserTypeFcmIds(LoginUserType.staff);
+    final _adminFcmList = await getUserTypeFcmIds(LoginUserType.admin);
+    return [
+      ..._studentFcmList,
+      ..._staffFcmList,
+      ..._adminFcmList,
+    ];
+  }
+
+  Future<List<String>> getUserTypeFcmIds(LoginUserType uType) async {
+    try {
+      List<String> _fcmList = [];
+      final _userCollection = getDbCollection(userType: uType);
+      final _userDocs = (await _userCollection.get()).docs;
+      if (_userDocs.isNotEmpty) {
+        _userDocs.forEach(
+          (element) {
+            _fcmList.add(element['fcm_id']);
+          },
+        );
+      }
+      return _fcmList;
+    } catch (e) {
+      print(e);
+      return [];
     }
   }
 

@@ -1,3 +1,4 @@
+import 'package:attendance_app/src/fcm/fcm_notification_handler.dart';
 import 'package:attendance_app/src/models/user_type.dart';
 import 'package:attendance_app/src/sessions/user_session.dart';
 import 'package:attendance_app/src/utils/utils.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 
 class LoginViewModel extends ChangeNotifier {
   final _db = FirebaseFirestore.instance;
+  final _fcm = FirebaseNotificationHandler.messaging;
   //Login
   final emailLoginTextFieldController = TextEditingController();
   final passwordLogindTextFieldController = TextEditingController();
@@ -78,6 +80,10 @@ class LoginViewModel extends ChangeNotifier {
         final _document = _collection.doc(email);
         final _data = (await _document.get()).data();
         if (_data!['password'] == password) {
+          final _fcmId = await FirebaseNotificationHandler.getFcmId() ?? '';
+          await _document.update({
+            'fcm_id': _fcmId,
+          });
           await UserSession.saveData(
             key: UserSession.userIdKey,
             data: email,
@@ -103,6 +109,7 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   Future<bool> logout() async {
+    _fcm.deleteToken();
     await UserSession.removeData(key: UserSession.userIdKey);
     await UserSession.removeData(key: UserSession.userTypeKey);
     return true;

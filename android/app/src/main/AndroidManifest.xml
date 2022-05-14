@@ -4,6 +4,9 @@
         android:label="Markey"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
+        <meta-data
+        android:name="com.google.firebase.messaging.default_notification_channel_id"
+        android:value="@string/notification_channel_id" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -20,6 +23,10 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+              <intent-filter>
+                <action android:name="FLUTTER_NOTIFICATION_CLICK" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

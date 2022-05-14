@@ -1,9 +1,9 @@
 import 'dart:async';
 
+import 'package:attendance_app/src/fcm/notification_handler.dart';
 import 'package:attendance_app/src/ui/login_screen.dart';
 import 'package:attendance_app/src/ui/profile/profile_screen.dart';
 import 'package:attendance_app/src/ui/widgets/app_scaffold.dart';
-import 'package:attendance_app/src/ui/profile/profile_screen.dart';
 import 'package:attendance_app/src/ui/widgets/logo_widget.dart';
 import 'package:attendance_app/src/utils/utils.dart';
 import 'package:attendance_app/src/view_model/login_viewmodel.dart';
@@ -23,6 +23,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     loadData();
+    NotificationHandler.initNotification(context);
   }
 
   Future<Timer> loadData() async {

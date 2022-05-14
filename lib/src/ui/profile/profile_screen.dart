@@ -1,3 +1,4 @@
+import 'package:attendance_app/src/fcm/fcm_notification_handler.dart';
 import 'package:attendance_app/src/models/admin_profile_model.dart';
 import 'package:attendance_app/src/models/screen_status.dart';
 import 'package:attendance_app/src/models/staff_profile_model.dart';
@@ -30,6 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     context.read<ProfileViewModel>().getProfileData();
+    FirebaseNotificationHandler().setupFirebase(context);
   }
 
   @override
