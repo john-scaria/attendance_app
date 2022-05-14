@@ -6,6 +6,7 @@ import 'package:attendance_app/src/models/student_profile_model.dart';
 import 'package:attendance_app/src/models/user_type.dart';
 import 'package:attendance_app/src/ui/login_screen.dart';
 import 'package:attendance_app/src/ui/profile/admin_profile.dart';
+import 'package:attendance_app/src/ui/profile/profile_error.dart';
 import 'package:attendance_app/src/ui/profile/staff_profile.dart';
 import 'package:attendance_app/src/ui/profile/student_profile.dart';
 import 'package:attendance_app/src/ui/widgets/app_button.dart';
@@ -48,9 +49,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: CircularProgressIndicator(),
         );
       case ScreenStatus.error:
-        return const Center(
-          child: Text('No Data Available'),
-        );
+        return const ProfileError();
       case ScreenStatus.success:
         return const ProfileBody();
       default:
