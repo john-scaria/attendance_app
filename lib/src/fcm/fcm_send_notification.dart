@@ -11,7 +11,7 @@ class FcmSendNotification {
     try {
       final _headers = {
         'Authorization':
-            'key=AAAA_J5nEIM:APA91bH_MBlu9bi579NN2GICZG8SUKi9M3DlbF_0UCdhIfEsFvx-iEvwo-zjimb0wOdvTe6awaCDsFlDMnzGhLvz8iayWftpBvzV7QDo8AkZMv_Wa_ooUv59bLucAjBu2_9yQY8X1pjo',
+            'key=AAAA_J5nEIM:APA91bEuWrdWtzZ7g_2FNXlye--ywplaNcKDJOfryilSOgdPBEJ8Opkpan8Kfw7U8jbDg6Lq7hsfYMqwUjOO3-7iNRcpArgY_Ap7qxGQiANEVPDRJtjt65QbRnt19VCuMELQVqcRlKAG',
         'Content-Type': 'application/json'
       };
       final _uri = Uri.parse('https://fcm.googleapis.com/fcm/send');
