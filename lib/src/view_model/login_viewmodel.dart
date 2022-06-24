@@ -174,6 +174,11 @@ class LoginViewModel extends ChangeNotifier {
     'S1',
     'S2',
     'S3',
+    'S4',
+    'S5',
+    'S6',
+    'S7',
+    'S8',
   ];
   String _selectedSemester = 'S1';
   String get selectedSemester => _selectedSemester;
@@ -201,6 +206,7 @@ class LoginViewModel extends ChangeNotifier {
     'Assistant Professor',
     'Professor',
     'Principal',
+    'Non-Teaching Staff'
   ];
   String _selectedProfession = 'Assistant Professor';
   String get selectedProfession => _selectedProfession;
