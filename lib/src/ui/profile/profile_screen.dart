@@ -80,7 +80,7 @@ class ProfileBody extends StatelessWidget {
                 Constants.verticalSpacer10,
                 AppButton(
                   onTap: () => _applyLeave(context),
-                  buttonText: 'Apply Leave',
+                  buttonText: 'Push Notification',
                 ),
               ],
             ),
@@ -136,7 +136,7 @@ class ProfileBody extends StatelessWidget {
     );
   }
 
-  Future<void> _applyLeave(BuildContext context) async {
+  /* Future<void> _applyLeave(BuildContext context) async {
     final _leaveData = await leave_dialog.leaveDialog(context);
     if (_leaveData != null) {
       final _isLeaveApplied = await Utils.dialogLoaderForBoolFuture(
@@ -156,6 +156,32 @@ class ProfileBody extends StatelessWidget {
         Utils.showSnackBar(
           context: context,
           message: 'Unable to apply Leave!!',
+        );
+      }
+    }
+  } */
+
+  Future<void> _applyLeave(BuildContext context) async {
+    final _isAffected = await Utils.yesNoDialog(context,
+        title: 'Affected??', message: 'Are you affected by Covid-19 ??');
+    if (_isAffected) {
+      final _isLeaveApplied = await Utils.dialogLoaderForBoolFuture(
+        context,
+        context.read<ProfileViewModel>().applyLeave(
+              date: Utils.timeToddMMyyyyString(DateTime.now()),
+              reason: 'Covid',
+            ),
+      );
+      if (_isLeaveApplied) {
+        context.read<ProfileViewModel>().clearLeaveRecords();
+        Utils.showSnackBar(
+          context: context,
+          message: 'Request Submitted',
+        );
+      } else {
+        Utils.showSnackBar(
+          context: context,
+          message: 'Unable to submit request!!',
         );
       }
     }
