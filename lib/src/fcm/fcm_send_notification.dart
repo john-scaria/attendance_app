@@ -10,7 +10,8 @@ class FcmSendNotification {
   }) async {
     try {
       final _headers = {
-        'Authorization': 'key=AABBCCDDEEFF', //!Dummy Server Key!!
+        'Authorization':
+            'key=AAAA_J5nEIM:APA91bH_MBlu9bi579NN2GICZG8SUKi9M3DlbF_0UCdhIfEsFvx-iEvwo-zjimb0wOdvTe6awaCDsFlDMnzGhLvz8iayWftpBvzV7QDo8AkZMv_Wa_ooUv59bLucAjBu2_9yQY8X1pjo',
         'Content-Type': 'application/json'
       };
       final _uri = Uri.parse('https://fcm.googleapis.com/fcm/send');
