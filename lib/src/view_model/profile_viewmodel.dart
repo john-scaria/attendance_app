@@ -239,7 +239,7 @@ class ProfileViewModel extends ChangeNotifier {
       if (_userDocs.isNotEmpty) {
         _userDocs.forEach(
           (element) {
-            _fcmList.add(element['fcm_id']);
+            _fcmList.add(element.data()['fcm_id'] ?? '');
           },
         );
       }
