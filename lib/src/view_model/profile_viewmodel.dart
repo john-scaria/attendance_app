@@ -149,6 +149,8 @@ class ProfileViewModel extends ChangeNotifier {
     }
   }
 
+  //!Request submitted
+
   String _currentDate = Utils.timeToddMMyyyyString(DateTime.now());
   String get currentDate => _currentDate;
 
@@ -196,20 +198,21 @@ class ProfileViewModel extends ChangeNotifier {
       String _mssgTitle = '';
       String _mssgBody = '';
       if (_userType == LoginUserType.student) {
-        _mssgTitle = 'Leave Requested by Student: ${_userData['full_name']}';
+        _mssgTitle = 'Covid-19 Affected to Student: ${_userData['full_name']}';
         _mssgBody =
-            'Reason: $reason, Leave Date: $date, Dept: ${_userData['department']},Sem: ${_userData['semester']}';
+            'Date: $date, Dept: ${_userData['department']},Sem: ${_userData['semester']}';
       }
       if (_userType == LoginUserType.staff) {
         _mssgTitle =
-            'Leave Requested by ${_userData['type']}: ${_userData['full_name']}';
-        _mssgBody = 'Reason: $reason, Leave Date: $date';
+            'Covid-19 Affected to ${_userData['type']}: ${_userData['full_name']}';
+        _mssgBody = 'Date: $date';
       }
       final _fcmIdList = await getAllFcmIds();
       await FcmSendNotification.sendNotification(
-          fcmIdList: _fcmIdList,
-          messageTitle: _mssgTitle,
-          messageBody: _mssgBody);
+        fcmIdList: _fcmIdList,
+        messageTitle: _mssgTitle,
+        messageBody: _mssgBody,
+      );
       return true;
     } catch (e) {
       print(e);
